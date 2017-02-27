@@ -86,6 +86,8 @@ export class HomePage {
   atualizarQuantidade() {
     let tempoInicio = this.calculoQuantidadeTempoInicial.valor.getTime();
     let tempoTermino = this.calculoQuantidadeTempoFinal.valor.getTime();
+    if (tempoTermino < tempoInicio)
+      tempoTermino += 24 * 60 * 60 * 1000;
 
     this.calculoQuantidadeQuantidade = "" + Math.trunc((tempoTermino - tempoInicio) / this.tempoDeAnalise.totalEmMilissegundos);
   }
