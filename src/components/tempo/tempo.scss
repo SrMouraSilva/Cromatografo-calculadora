@@ -1,0 +1,10 @@
+tempo {
+  input {
+    border: 0;
+  }
+
+  input[disabled] {
+    background: inherit;
+    color: #999;
+  }
+}

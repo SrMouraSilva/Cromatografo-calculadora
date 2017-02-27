@@ -1,36 +1,99 @@
-import { Component } from '@angular/core';
+import { ViewChild, Component } from '@angular/core';
 
 import { NavController } from 'ionic-angular';
+import { TempoComponent } from '../../components/tempo/tempo';
+
 
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
 export class HomePage {
-  private base : number;
-  tempo: string;
-  termino: any;
-  quantidade: any;
 
-  constructor(public navCtrl: NavController) {
-    this.base = this.tempoZero().getTime();
-    this.tempo = this.seteMinutos().toISOString();
+  @ViewChild('tempoDeAnalise') tempoDeAnalise: TempoComponent;
 
-    this.termino = {
-      inicio: this.buildData().toISOString(),
-      quantidade: 0,
-      termino: this.buildData().toISOString()
-    };
+  public calculoTerminoQuantidade = "0";
+  @ViewChild('calculoTerminoTempoInicial') calculoTerminoTempoInicial: TempoComponent;
+  @ViewChild('calculoTerminoTempoFinal') calculoTerminoTempoFinal: TempoComponent;
 
-    this.quantidade = {
-      inicio: this.buildData().toISOString(),
-      quantidade: 0,
-      termino: this.buildData().toISOString()
-    };
+  public calculoQuantidadeQuantidade = "0";
+  @ViewChild('calculoQuantidadeTempoInicial') calculoQuantidadeTempoInicial: TempoComponent;
+  @ViewChild('calculoQuantidadeTempoFinal') calculoQuantidadeTempoFinal: TempoComponent;
+
+  public quantidade: {inicio : Date, quantidade: number, termino : Date };
+
+  constructor(public navCtrl: NavController) {}
+
+  ionViewWillEnter() {
+    this.inicializarCalculoTermino();
+    this.inicializarCalculoQuantidade();
   }
 
-  private tempoZero() {
-    let data = this.buildData();
+  inicializarCalculoTermino() {
+    this.tempoDeAnalise.valor = this.seteMinutos();
+
+    const inicio = DataUtils.buildData();
+    inicio.setSeconds(0);
+    inicio.setMilliseconds(0);
+
+    this.calculoTerminoTempoInicial.valor = inicio;
+
+    const fim = DataUtils.buildData();
+    fim.setSeconds(0);
+    fim.setMilliseconds(0);
+
+    this.calculoTerminoTempoFinal.valor = fim;
+
+    this.calculoTerminoQuantidade = "0";
+  }
+
+  inicializarCalculoQuantidade() {
+    const inicio = DataUtils.buildData();
+    inicio.setSeconds(0);
+    inicio.setMilliseconds(0);
+
+    this.calculoQuantidadeTempoInicial.valor = inicio;
+
+    const termino = DataUtils.buildData();
+    termino.setSeconds(0);
+    termino.setMilliseconds(0);
+
+    this.calculoQuantidadeTempoFinal.valor = termino;
+    this.calculoQuantidadeQuantidade = "0";
+  }
+
+  private seteMinutos() {
+    let tempo = DataUtils.tempoZero();
+    tempo.setMinutes(7);
+
+    return tempo;
+  }
+
+  atualizar() {
+    this.atualizarTermino();
+    this.atualizarQuantidade();
+  }
+
+  atualizarTermino() {
+    let tempoInicio = this.calculoTerminoTempoInicial.valor.getTime();
+    let quantidade = parseInt(this.calculoTerminoQuantidade);
+
+    let tempoFim = tempoInicio + quantidade * this.tempoDeAnalise.totalEmMilissegundos;
+
+    this.calculoTerminoTempoFinal.valor = new Date(tempoFim);
+  }
+
+  atualizarQuantidade() {
+    let tempoInicio = this.calculoQuantidadeTempoInicial.valor.getTime();
+    let tempoTermino = this.calculoQuantidadeTempoFinal.valor.getTime();
+
+    this.calculoQuantidadeQuantidade = "" + Math.trunc((tempoTermino - tempoInicio) / this.tempoDeAnalise.totalEmMilissegundos);
+  }
+}
+
+class DataUtils {
+  static tempoZero() {
+    let data = DataUtils.buildData();
     let timeZone = data.getUTCHours() - data.getHours();
 
     data.setHours(-timeZone);
@@ -41,39 +104,16 @@ export class HomePage {
     return data;
   }
 
-  private seteMinutos() {
-    let tempo = this.tempoZero();
-    tempo.setMinutes(7);
-
-    return tempo;
-  }
-
-  atualizarTermino() {
-    let tempoInicio = this.buildData(this.termino.inicio).getTime();
-    let quantidade = this.termino.quantidade;
-
-    let tempoFim = tempoInicio + quantidade * this.tempoAnalise();
-
-    this.termino.termino = this.buildData(tempoFim).toISOString();
-  }
-
-  atualizarQuantidade() {
-    let tempoInicio = this.buildData(this.quantidade.inicio).getTime();
-    let tempoTermino = this.buildData(this.quantidade.termino).getTime();
-
-    this.quantidade.quantidade = Math.trunc((tempoTermino - tempoInicio) / this.tempoAnalise());
-  }
-
-  tempoAnalise() {
-    return new Date(this.tempo).getTime() - this.base;
-  }
-
-  buildData(tempo?) {
+  static buildData(tempo?) {
     let data = tempo ? new Date(tempo) : new Date();
-    let timeZone = data.getUTCHours() - data.getHours();
+    let timeZone = DataUtils.timeZone(data);
 
     data.setHours(data.getHours() - timeZone);
 
     return data;
+  }
+
+  static timeZone(data) {
+    return data.getUTCHours() - data.getHours();
   }
 }

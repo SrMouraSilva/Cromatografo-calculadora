@@ -1,7 +1,7 @@
 <ion-header color="primary">
   <ion-navbar>
     <ion-title>
-      Embrapa - Calculadora
+      Cromatógrago - Calculadora
     </ion-title>
   </ion-navbar>
 </ion-header>
@@ -10,8 +10,7 @@
 
   <ion-item>
     <ion-label color="primary">Tempo de análise <span class="tempo">HH:mm:ss</span></ion-label>
-    <ion-datetime displayFormat="HH:mm:ss" placeholder="00:08:00" [(ngModel)]="tempo"
-      (ionChange)="atualizarTermino(); atualizarQuantidade()"></ion-datetime>
+    <tempo #tempoDeAnalise exibirSegundos="true" item-right (change)="atualizar()"></tempo>
   </ion-item>
 
   <h2>Tempo de término</h2>
@@ -19,17 +18,18 @@
   <ion-list>
     <ion-item>
       <ion-label color="primary">Início <span class="tempo">HH:mm</span></ion-label>
-      <ion-datetime (ionChange)="atualizarTermino()" displayFormat="HH:mm" placeholder="08:00" [(ngModel)]="termino.inicio"></ion-datetime>
+      <tempo #calculoTerminoTempoInicial item-right (change)="atualizarTermino()"></tempo>
     </ion-item>
 
     <ion-item>
       <ion-label color="primary">Quantidade</ion-label>
-      <ion-input (change)="atualizarTermino()" type="number" placeholder="0" min="0" max="64" [(ngModel)]="termino.quantidade"></ion-input>
+      <ion-input (change)="atualizarTermino()" type="number" placeholder="0" min="0" max="1000" [(ngModel)]="calculoTerminoQuantidade"></ion-input>
     </ion-item>
 
     <ion-item class="resultado">
       <ion-label>Término <span class="tempo">HH:mm</span></ion-label>
-      <ion-datetime displayFormat="HH:mm" [(ngModel)]="termino.termino" disabled></ion-datetime>
+      <tempo #calculoTerminoTempoFinal item-right
+             (change)="atualizarTermino()" exibirSegundos="true" disabled="true"></tempo>
     </ion-item>
   </ion-list>
 
@@ -38,16 +38,16 @@
   <ion-list>
     <ion-item>
       <ion-label color="primary">Início <span class="tempo">HH:mm</span></ion-label>
-      <ion-datetime (ionChange)="atualizarQuantidade()" displayFormat="HH:mm" placeholder="08:00" [(ngModel)]="quantidade.inicio"></ion-datetime>
+      <tempo #calculoQuantidadeTempoInicial item-right (change)="atualizarQuantidade()"></tempo>
     </ion-item>
     <ion-item>
       <ion-label color="primary">Término <span class="tempo">HH:mm</span></ion-label>
-      <ion-datetime (ionChange)="atualizarQuantidade()" displayFormat="HH:mm" placeholder="08:00" [(ngModel)]="quantidade.termino"></ion-datetime>
+      <tempo #calculoQuantidadeTempoFinal item-right (change)="atualizarQuantidade()"></tempo>
     </ion-item>
 
     <ion-item class="resultado">
       <ion-label>Quantidade</ion-label>
-      <ion-input type="number" placeholder="0" [(ngModel)]="quantidade.quantidade" disabled></ion-input>
+      <ion-input type="number" placeholder="0" [(ngModel)]="calculoQuantidadeQuantidade" disabled></ion-input>
     </ion-item>
   </ion-list>
 </ion-content>

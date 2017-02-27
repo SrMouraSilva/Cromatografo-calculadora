@@ -2,11 +2,13 @@ import { NgModule, ErrorHandler } from '@angular/core';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
+import { TempoComponent } from '../components/tempo/tempo';
 
 @NgModule({
   declarations: [
     MyApp,
-    HomePage
+    HomePage,
+    TempoComponent
   ],
   imports: [
     IonicModule.forRoot(MyApp)
@@ -14,7 +16,8 @@ import { HomePage } from '../pages/home/home';
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    HomePage
+    HomePage,
+    TempoComponent
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}]
 })
